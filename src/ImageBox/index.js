@@ -1,12 +1,11 @@
-import React from 'react';
-import { LoadingOutlined } from '@ant-design/icons';
+import React from 'react'
+import { LoadingOutlined } from '@ant-design/icons'
 
 class ImageBox extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
       isComplete: false,
-      noSupport: false,
       isError: false,
     }
     this.image = undefined
@@ -24,13 +23,23 @@ class ImageBox extends React.Component {
   }
 
   componentWillReceiveProps(props) {
-    if (props.resetPreviewer) {
+    if (props.reset) {
       // 重置
       this.transform.scale = 1
       this.transform.rotate = 0
       this.transform.translateX = 0
       this.transform.translateY = 0
       this.fill()
+      return
+    }
+
+    if (props.fullScreen) {
+      // 平铺
+      this.transform.scale = 1
+      this.transform.rotate = 0
+      this.transform.translateX = 0
+      this.transform.translateY = 0
+      this.draw()
       return
     }
 
@@ -42,16 +51,16 @@ class ImageBox extends React.Component {
     }
 
     if (props.src !== this.props.src) {
-      // 切换图片
-      this.showFile(props.src)
+      // 切换
       this.setState({
         isComplete: false,
         isError: false,
       })
+      this.showFile(props.src)
     }
 
     if (this.props.rotate !== props.rotate) {
-      // 旋转图片
+      // 旋转
       this.transform.rotate = props.rotate
       this.draw()
     }
@@ -96,13 +105,12 @@ class ImageBox extends React.Component {
   draw = () => {
     const cw = this.canvas.width
     const ch = this.canvas.height
-
     const sw = this.image.width
     const sh = this.image.height
     const dx = ((cw - sw) / 2) - (cw / 2)
     const dy = ((ch - sh) / 2) - (ch / 2)
-
     const ctx = this.canvas.getContext('2d')
+
     ctx.save()
     ctx.clearRect(0, 0, cw, ch)
     ctx.translate(cw / 2, ch / 2)
@@ -130,24 +138,24 @@ class ImageBox extends React.Component {
     }
   }
 
-  renderImage = () => {
-    const { extra } = this.props
-    const { isComplete, isError } = this.state
+  render() {
+    const { isComplete, isError, } = this.state
+    const { width, height, loadingText, errorText } = this.props
     return (
-      <div>
+      <div style={{ height: height }}>
         {
           !isComplete && (
-            <span>
+            <span className='image-previewer-loading-tips'>
               <LoadingOutlined style={{ transform: 'scale(2)', margin: 20 }} />
-                  Loading...please wait
+              {loadingText}
             </span>
           )
         }
         {!isError && isComplete && (
           <canvas
             id="imagecanvas"
-            width={700}
-            height={500}
+            width={width}
+            height={height - 10}
             onMouseDown={this.drag}
             onContextMenu={e => e.preventDefault()}
             ref={instance => this.canvas = instance}
@@ -155,29 +163,13 @@ class ImageBox extends React.Component {
         )}
         {
           isComplete && isError && (
-            <span>
-              {extra}
+            <span className='image-previewer-loading-tips'>
+              {errorText}
             </span>
           )
         }
       </div>
     )
-  }
-
-  renderNoSupport = () => {
-    const { extra } = this.props
-    return (<div>
-      {extra}
-    </div>)
-  }
-
-  render() {
-    const { fileType, src } = this.props
-    if (fileType && fileType.indexOf(src) < 0) {
-      return this.renderNoSupport()
-    } else {
-      return this.renderImage()
-    }
   }
 
 }

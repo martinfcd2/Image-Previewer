@@ -1,6 +1,7 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { Modal, Button } from 'antd';
+import React, { Fragment } from 'react'
+// import ReactDOM from 'react-dom'
+import PropTypes from 'prop-types'
+import { Button } from 'antd'
 import {
   RotateRightOutlined,
   RotateLeftOutlined,
@@ -10,154 +11,171 @@ import {
   RightOutlined,
   FullscreenExitOutlined,
   FullscreenOutlined,
-  DownloadOutlined,
-  CloseOutlined,
-} from '@ant-design/icons';
-import ImageBox from './ImageBox';
+} from '@ant-design/icons'
+import ImageBox from './ImageBox'
 import 'antd/dist/antd.css'
+import './index.css'
 
-const fileTypes = ['jpg', 'jpeg', 'png', 'gif', 'bmp'];
-const fileList = [
-  {
-    src: 'https://imgconvert.csdnimg.cn/aHR0cHM6Ly9tbWJpei5xcGljLmNuL21tYml6L2RGVGZNdDAxMTRpY3c1S05zV21LRExkMDBMMVlOT25laWF4RTNpY0ppY0ZzMFdDYlU0dVZKdnhrWWNBUTdoYXlTVzQxaklJR1VqdTdlVW16emdpYmlidWlhazZZZy82NDA?x-oss-process=image/format,png',
-  },
-  {
-    src: 'https://image-static.segmentfault.com/257/618/2576186159-5b0ca85a31dfc_articlex',
-  },
-  {
-    src: 'https://image-static.segmentfault.com/255/541/2555411433-5b0ca85a46a1e_articlex',
-  },
-  {
-    src: 'http://www.bkill.com/u/upload/2017/06/13/140108493451.jpg',
-  },
-];
-const extra = '无法预览或者预览失败';
-const allowDownload = true;
+const defaultState = {
+  mode: 'single',
+  width: 600,
+  height: 500,
+  loadingText: '',
+  errorText: '',
+  watermarkText: '',
+  allowWheelScale: false,
+  fileList: [],
+}
 
-class PreviewerModal extends React.Component {
+const stateTypes = {
+  mode: PropTypes.string,
+  width: PropTypes.number,
+  height: PropTypes.number,
+  loadingText: PropTypes.string,
+  errorText: PropTypes.string,
+  watermarkText: PropTypes.string,
+  allowWheelScale: PropTypes.bool,
+  fileList: PropTypes.array,
+}
+
+class ImagePreviewer extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      modalVisible: false,
+      ...defaultState,
+      ...props,
       src: props.fileList[0].src,
       index: 0,
       rotate: 0,
       scale: 1,
       reset: false,
+      fullScreen: false,
       prevDisable: true,
       nextDisable: false,
     }
   }
+
+  componentWillReceiveProps(props) {
+    this.setState({
+      ...this.state,
+      ...props,
+    })
+  }
+
   onPrev = () => {
-    const { index } = this.state;
-    const { fileList } = this.props;
+    const { index } = this.state
+    const { fileList } = this.props
     this.setState({
       src: fileList[index - 1].src,
       index: index === 0 ? 0 : index - 1,
-      prevDisable: index - 1 === 0,
-      nextDisable: index + 1 === fileList.length - 1,
+      reset: false,
+      fullScreen: false,
     })
   }
+
   onNext = () => {
-    const { index } = this.state;
-    const { fileList } = this.props;
+    const { index } = this.state
+    const { fileList } = this.props
     this.setState({
       src: fileList[index + 1].src,
       index: index === fileList.length ? index : index + 1,
-      prevDisable: index - 1 === 0,
-      nextDisable: index + 1 === fileList.length - 1,
+      reset: false,
+      fullScreen: false,
     })
   }
-  onRotateLeft = () => {
 
+  onRotate = (v) => {
+    let rotate = this.state.rotate + v
+    if (rotate < 0) {
+      rotate += 4
+    } else if (rotate >= 4) {
+      rotate -= 4
+    }
+    this.setState({ rotate, reset: false, fullScreen: false })
   }
-  onRotateRight = () => {
 
+  onZoom = (v) => {
+    this.setState({
+      scale: this.state.scale + v,
+      reset: false,
+      fullScreen: false,
+    })
   }
-  onZoomIn = () => {
 
-  }
-  onZoomOut = () => {
-
-  }
-  onFullscreenExit = () => {
-
-  }
   onFullscreen = () => {
-
+    this.setState({ reset: false, fullScreen: true })
   }
+
   onReset = () => {
+    this.setState({ reset: true, fullScreen: false, rotate: 0 })
+  }
 
-  }
-  onDownload = () => {
-
-  }
-  onClose = () => {
-
-  }
-  renderFooter = () => {
-    return (
-      <div style={{ textAlign: 'center' }}>
-        <Button style={{ margin: 5 }} onClick={this.onPrev} disabled={this.state.prevDisable}>
-          <LeftOutlined />
-        </Button>
-        <Button style={{ margin: 5 }} onClick={this.onNext} disabled={this.state.nextDisable}>
-          <RightOutlined />
-        </Button>
-        <Button style={{ margin: 5 }} onClick={this.onRotateLeft}>
-          <RotateLeftOutlined />
-        </Button>
-        <Button style={{ margin: 5 }} onClick={this.onRotateRight}>
-          <RotateRightOutlined />
-        </Button>
-        <Button style={{ margin: 5 }} onClick={this.onZoomIn}>
-          <ZoomInOutlined />
-        </Button>
-        <Button style={{ margin: 5 }} onClick={this.onZoomOut}>
-          <ZoomOutOutlined />
-        </Button>
-        <Button style={{ margin: 5 }} onClick={this.onFullscreenExit}>
-          <FullscreenExitOutlined />
-        </Button>
-        <Button style={{ margin: 5 }} onClick={this.onFullscreen}>
-          <FullscreenOutlined />
-        </Button>
-        <Button style={{ margin: 5 }} onClick={this.onReset}>
-          reset
-        </Button>
-        {allowDownload && (
-          <Button style={{ margin: 5 }} onClick={this.onDownload}>
-            <DownloadOutlined />
-          </Button>
-        )}
-        <Button style={{ margin: 5 }} onClick={this.onClose}>
-          <CloseOutlined />
-        </Button>
-      </div>
-    )
-  }
   render() {
-    const { src } = this.state;
+    const {
+      src,
+      width,
+      height,
+      mode,
+      scale,
+      rotate,
+      reset,
+      fullScreen,
+      index,
+      fileList,
+      loadingText,
+      errorText,
+    } = this.state
     return (
-      <div>
-        <Modal
-          title='Image Previewer'
-          visible={this.state.modalVisible}
-          width={748}
-          maskClosable={false}
-          footer={this.renderFooter()}
-        >
-          <ImageBox fileTypes={this.props.fileTypes} src={src} extra={this.props.extra} />
-        </Modal>
-        <Button onClick={() => this.setState({ modalVisible: true })}>Open PreViewer</Button>
+      <div className='image-previewer' style={{ width: width, height: height }}>
+        <ImageBox
+          width={width}
+          height={height - 80}
+          loadingText={loadingText}
+          errorText={errorText}
+          src={src}
+          scale={scale}
+          rotate={rotate}
+          reset={reset}
+          fullScreen={fullScreen}
+        />
+        <div className='image-previewer-operation-bar'>
+          {mode === 'multiple' && (
+            <Fragment>
+              <Button onClick={this.onPrev} disabled={index === 0}>
+                <LeftOutlined />
+              </Button>
+              <Button onClick={this.onNext} disabled={index === fileList.length - 1}>
+                <RightOutlined />
+              </Button>
+            </Fragment>
+          )}
+          <Button onClick={() => this.onRotate(-1)}>
+            <RotateLeftOutlined />
+          </Button>
+          <Button onClick={() => this.onRotate(+1)}>
+            <RotateRightOutlined />
+          </Button>
+          <Button onClick={() => this.onZoom(+0.1)}>
+            <ZoomInOutlined />
+          </Button>
+          <Button onClick={() => this.onZoom(-0.1)}>
+            <ZoomOutOutlined />
+          </Button>
+          <Button onClick={this.onReset}>
+            <FullscreenExitOutlined />
+          </Button>
+          <Button onClick={this.onFullscreen}>
+            <FullscreenOutlined />
+          </Button>
+          <Button onClick={this.onReset}>
+            reset
+          </Button>
+        </div>
       </div>
     )
   }
 }
 
-ReactDOM.render(
-  <React.StrictMode>
-    <PreviewerModal fileTypes={fileTypes} fileList={fileList} extra={extra} allowDownload={allowDownload} />
-  </React.StrictMode>,
-  document.getElementById('root')
-);
+ImagePreviewer.propTypes = stateTypes
+
+export default ImagePreviewer

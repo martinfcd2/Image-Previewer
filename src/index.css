@@ -1,0 +1,24 @@
+.image-previewer {
+  position: relative;
+}
+
+.image-previewer-operation-bar {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: 80px;
+  line-height: 80px;
+  border-top: 1px solid #ccc;
+}
+
+.image-previewer-loading-tips {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
