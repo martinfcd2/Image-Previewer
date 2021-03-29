@@ -1,7 +1,6 @@
 {
   "name": "image-previewer",
-  "version": "0.1.0",
-  "private": true,
+  "version": "0.1.2",
   "dependencies": {
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
@@ -35,5 +34,23 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  }
+  },
+  "description": "A image preview component to prevent downloading pictures",
+  "main": "index.js",
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/martinfcd2/Image-Previewer.git"
+  },
+  "keywords": [
+    "canvas",
+    "image",
+    "preview"
+  ],
+  "author": "martinfcd2",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/martinfcd2/Image-Previewer/issues"
+  },
+  "homepage": "https://github.com/martinfcd2/Image-Previewer#readme"
 }
