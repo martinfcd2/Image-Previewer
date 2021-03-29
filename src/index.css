@@ -22,3 +22,28 @@
   justify-content: center;
   align-items: center;
 }
+
+.image-previewer-watermark {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+}
+
+.image-previewer-watermark-item {
+  -webkit-transform: rotate(-30deg);
+  transform: rotate(-30deg);
+  position: absolute;
+  overflow: hidden;
+  z-index: 99999;
+  opacity: 0.3;
+  font-size: 14px;
+  font-family: 微软雅黑;
+  color: #000;
+  text-align: center;
+  width: 120px;
+  height: 20px;
+  display: block;
+  pointer-events: none;
+}

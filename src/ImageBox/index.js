@@ -10,6 +10,9 @@ class ImageBox extends React.Component {
     }
     this.image = undefined
     this.canvas = undefined
+    this.canvasWrapper = undefined
+    this.watermark = undefined
+    this.watermarkWrapper = undefined
     this.transform = {
       rotate: 0,
       scale: 1,
@@ -19,7 +22,18 @@ class ImageBox extends React.Component {
   }
 
   componentDidMount() {
-    this.showFile(this.props.src)
+    const { src, watermarkText } = this.props
+    this.showFile(src)
+    if (watermarkText) {
+      this.renderWaterMark(watermarkText)
+    }
+  }
+
+  componentDidUpdate() {
+    const { allowWheelScale } = this.props
+    if (allowWheelScale && this.canvasWrapper) {
+      this.canvasWrapper.addEventListener('wheel', this.onWheel)
+    }
   }
 
   componentWillReceiveProps(props) {
@@ -138,11 +152,49 @@ class ImageBox extends React.Component {
     }
   }
 
+  onWheel = (event) => {
+    event.stopPropagation()
+    event.preventDefault()
+    if (event.deltaY < 0) {
+      this.transform.scale += 0.1
+    } else {
+      this.transform.scale -= 0.1
+    }
+    this.draw()
+  }
+
+  renderWaterMark = (text) => {
+    if (this.watermarkWrapper && this.watermark.innerHTML === '') {
+      const { width, height } = this.watermarkWrapper.getBoundingClientRect()
+      if (width && height) {
+        const fragment = document.createDocumentFragment()
+        const rows = Math.floor(height / 80)
+        const cols = Math.floor(width / 100)
+        for (let i = 0; i < rows; i++) {
+          const y = 120 * i
+          for (let j = 0; j < cols; j++) {
+            const x = 120 * j
+            const div = document.createElement('div')
+            div.appendChild(document.createTextNode(text))
+            div.classList.add('image-previewer-watermark-item')
+            div.style.left = `${x}px`
+            div.style.top = `${y}px`
+            fragment.appendChild(div)
+          }
+        }
+        this.watermark.appendChild(fragment)
+      }
+    }
+  }
+
   render() {
     const { isComplete, isError, } = this.state
     const { width, height, loadingText, errorText } = this.props
     return (
       <div style={{ height: height }}>
+        <div className="image-previewer-watermark" ref={instance => { this.watermarkWrapper = instance }} >
+          <div style={{ position: 'absolute', left: 0, top: 0, bottom: 0, right: 0, overflow: 'hidden' }} ref={instance => { this.watermark = instance }} />
+        </div>
         {
           !isComplete && (
             <span className='image-previewer-loading-tips'>
@@ -152,14 +204,17 @@ class ImageBox extends React.Component {
           )
         }
         {!isError && isComplete && (
-          <canvas
-            id="imagecanvas"
-            width={width}
-            height={height - 10}
-            onMouseDown={this.drag}
-            onContextMenu={e => e.preventDefault()}
-            ref={instance => this.canvas = instance}
-          />
+          <div ref={instance => { this.canvasWrapper = instance }}>
+            <canvas
+              id="imagecanvas"
+              style={{ position: 'relative' }}
+              width={width}
+              height={height - 10}
+              onMouseDown={this.drag}
+              onContextMenu={e => e.preventDefault()}
+              ref={instance => this.canvas = instance}
+            />
+          </div>
         )}
         {
           isComplete && isError && (

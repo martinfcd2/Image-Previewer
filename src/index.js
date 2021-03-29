@@ -1,5 +1,4 @@
 import React, { Fragment } from 'react'
-// import ReactDOM from 'react-dom'
 import PropTypes from 'prop-types'
 import { Button } from 'antd'
 import {
@@ -18,7 +17,7 @@ import './index.css'
 
 const defaultState = {
   mode: 'single',
-  width: 600,
+  width: 500,
   height: 500,
   loadingText: '',
   errorText: '',
@@ -50,8 +49,6 @@ class ImagePreviewer extends React.Component {
       scale: 1,
       reset: false,
       fullScreen: false,
-      prevDisable: true,
-      nextDisable: false,
     }
   }
 
@@ -122,16 +119,12 @@ class ImagePreviewer extends React.Component {
       fullScreen,
       index,
       fileList,
-      loadingText,
-      errorText,
     } = this.state
     return (
-      <div className='image-previewer' style={{ width: width, height: height }}>
+      <div className='image-previewer' style={{ width: width, height: height, position: 'relative' }}>
         <ImageBox
-          width={width}
+          {...this.props}
           height={height - 80}
-          loadingText={loadingText}
-          errorText={errorText}
           src={src}
           scale={scale}
           rotate={rotate}
