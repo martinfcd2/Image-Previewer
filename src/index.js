@@ -12,8 +12,7 @@ import {
   FullscreenOutlined,
 } from '@ant-design/icons'
 import ImageBox from './ImageBox'
-import 'antd/dist/antd.css'
-import './index.css'
+import './index.less'
 
 const defaultState = {
   mode: 'single',

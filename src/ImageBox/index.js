@@ -156,9 +156,9 @@ class ImageBox extends React.Component {
     event.stopPropagation()
     event.preventDefault()
     if (event.deltaY < 0) {
-      this.transform.scale += 0.1
+      this.transform.scale = Math.min(1, this.transform.scale + 0.1)
     } else {
-      this.transform.scale -= 0.1
+      this.transform.scale = Math.max(0.1, this.transform.scale - 0.1)
     }
     this.draw()
   }

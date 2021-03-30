@@ -14,6 +14,6 @@ A image preview component to prevent downloading pictures
 | allowWheelScale | 是否允许滚轮缩放       | boolean                    | false   |
 | fileList        | 文件列表               | array                      |         |
 
-### Git repositories
+### Git repository
 
 https://github.com/martinfcd2/Image-Previewer/tree/master
