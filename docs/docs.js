@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDom from 'react-dom';
-import ImagePreviewer from '../src/index'
+import ImagePreviewer from './index.js';
 
 const config = {
   mode: 'multiple',
