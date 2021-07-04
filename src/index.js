@@ -46,8 +46,7 @@ class ImagePreviewer extends React.Component {
       index: 0,
       rotate: 0,
       scale: 1,
-      reset: false,
-      fullScreen: false,
+      resetCount: 0,
     }
   }
 
@@ -64,8 +63,7 @@ class ImagePreviewer extends React.Component {
     this.setState({
       src: fileList[index - 1].src,
       index: index === 0 ? 0 : index - 1,
-      reset: false,
-      fullScreen: false,
+      resetCount: 0,
     })
   }
 
@@ -75,8 +73,7 @@ class ImagePreviewer extends React.Component {
     this.setState({
       src: fileList[index + 1].src,
       index: index === fileList.length ? index : index + 1,
-      reset: false,
-      fullScreen: false,
+      resetCount: 0,
     })
   }
 
@@ -87,23 +84,18 @@ class ImagePreviewer extends React.Component {
     } else if (rotate >= 4) {
       rotate -= 4
     }
-    this.setState({ rotate, reset: false, fullScreen: false })
+    this.setState({ rotate, resetCount: 0 })
   }
 
   onZoom = (v) => {
     this.setState({
       scale: this.state.scale + v,
-      reset: false,
-      fullScreen: false,
+      resetCount: 0,
     })
   }
 
-  onFullscreen = () => {
-    this.setState({ reset: false, fullScreen: true })
-  }
-
   onReset = () => {
-    this.setState({ reset: true, fullScreen: false, rotate: 0 })
+    this.setState({ resetCount: this.state.resetCount + 1 })
   }
 
   render() {
@@ -114,8 +106,7 @@ class ImagePreviewer extends React.Component {
       mode,
       scale,
       rotate,
-      reset,
-      fullScreen,
+      resetCount,
       index,
       fileList,
     } = this.state
@@ -127,8 +118,7 @@ class ImagePreviewer extends React.Component {
           src={src}
           scale={scale}
           rotate={rotate}
-          reset={reset}
-          fullScreen={fullScreen}
+          resetCount={resetCount}
         />
         <div className='image-previewer-operation-bar'>
           {mode === 'multiple' && (
@@ -152,12 +142,6 @@ class ImagePreviewer extends React.Component {
           </Button>
           <Button onClick={() => this.onZoom(-0.1)}>
             <ZoomOutOutlined />
-          </Button>
-          <Button onClick={this.onReset}>
-            <FullscreenExitOutlined />
-          </Button>
-          <Button onClick={this.onFullscreen}>
-            <FullscreenOutlined />
           </Button>
           <Button onClick={this.onReset}>
             reset

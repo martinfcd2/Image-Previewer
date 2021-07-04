@@ -9,11 +9,12 @@ const devConfig = {
     filename: 'demo.bundle.js', // 输出的文件名称
     path: path.resolve(__dirname, '../demo') // 输出的文件目录
   },
-  devServer: { // 该字段用于配置webpack-dev-server
+  devServer: {
     contentBase: path.join(__dirname, '../demo'),
-    compress: true,
-    port: 9000, // 端口9000
-    open: true // 自动打开浏览器
+    compress: true, // 是否启用 gzip 压缩
+    port: 9000,
+    open: true, // 自动打开浏览器
+    hot: true // 热更新
   },
   module: {
     rules: [
